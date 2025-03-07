@@ -3,18 +3,22 @@ package game2048logic;
 import game2048rendering.Board;
 import game2048rendering.Side;
 import game2048rendering.Tile;
+import net.sf.saxon.trans.SymbolicName;
 
 import java.util.Formatter;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /** The state of a game of 2048.
  *  @author P. N. Hilfinger + Josh Hug
  */
+
 public class Model {
     /** Current contents of the board. */
     private final Board board;
     /** Current score. */
-    private int score;
+    public int score;
 
     /* Coordinate System: column x, row y of the board (where x = 0,
      * y = 0 is the lower-left corner of the board) will correspond
@@ -85,6 +89,14 @@ public class Model {
      * */
     public boolean emptySpaceExists() {
         // TODO: Task 2. Fill in this function.
+        int size = board.size();
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (board.tile(i,j) == null){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -95,7 +107,19 @@ public class Model {
      */
     public boolean maxTileExists() {
         // TODO: Task 3. Fill in this function.
+        int size = board.size();
+        for (int i = size - 1; i >= 0; i--) {
+            for (int j = 0; j < size; j++) {
+                if (board.tile(i,j) != null){
+                    if (board.tile(i,j).value() == MAX_PIECE) {
+                        return true;
+                    }
+                }
+            }
+        }
+
         return false;
+
     }
 
     /**
@@ -106,7 +130,32 @@ public class Model {
      */
     public boolean atLeastOneMoveExists() {
         // TODO: Fill in this function.
+        int size = board.size();
+        int[][] DIRECTIONS = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (board.tile(i,j) != null){
+                    for (int k = 0; k < DIRECTIONS.length; k++) {
+                        int dx = DIRECTIONS[k][0];
+                        int dy = DIRECTIONS[k][1];
+                        int nx, ny;
+                        nx = i + dx;
+                        ny = j + dy;
+                        if (nx >= 0 && ny >= 0 && nx < size && ny < size) {
+                            if (board.tile(nx,ny) != null && board.tile(nx,ny).value() == board.tile(i,j).value()){
+                                return true;
+                            }
+                        }
+                    }
+                }else {
+                    return true;
+                }
+            }
+        }
+
         return false;
+
     }
 
     /**
@@ -124,9 +173,46 @@ public class Model {
      *    and the trailing tile does not.
      */
     public void moveTileUpAsFarAsPossible(int x, int y) {
-        Tile currTile = board.tile(x, y);
-        int myValue = currTile.value();
-        int targetY = y;
+        //Tile currTile = board.tile(x, y);
+        //int myValue = currTile.value();
+        //int targetY = y;
+        int size = board.size();
+        for (int j = y + 1; j < size; j++) {
+            if (board.tile(x,j - 1) != null && board.tile(x,j - 1).wasMerged() == false){
+                Tile last = board.tile(x, j - 1);
+                try {
+                    int prev = 0;
+                    if (board.tile(x,j) != null){
+                        prev = board.tile(x,j).value();
+                    }
+                    if (board.tile(x,j) != null && board.tile(x,j).wasMerged() == false){
+                        board.move(x,j,board.tile(x, j - 1));
+                    }else if (board.tile(x,j) == null){
+                        board.move(x,j,board.tile(x, j - 1));
+                    }
+
+                    if (board.tile(x, j) != null && prev * 2== board.tile(x,j).value()){
+                        score = score + prev * 2;
+                    }
+
+                }catch (IllegalArgumentException e){
+                    board.addTile(last);
+
+
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
 
         // TODO: Tasks 5, 6, and 10. Fill in this function.
     }
@@ -138,10 +224,24 @@ public class Model {
      * */
     public void tiltColumn(int x) {
         // TODO: Task 7. Fill in this function.
+        int size = board.size();
+
+        for (int j = size - 1; j >= 0; j--) {
+            moveTileUpAsFarAsPossible(x,j);
+        }
+
+
     }
 
     public void tilt(Side side) {
         // TODO: Tasks 8 and 9. Fill in this function.
+
+        int size = board.size();
+        board.setViewingPerspective(side);
+        for (int i = 0; i < size; i++) {
+            tiltColumn(i);
+        }
+        board.setViewingPerspective(Side.NORTH);
     }
 
     /** Tilts every column of the board toward SIDE.

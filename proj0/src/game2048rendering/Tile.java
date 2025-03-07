@@ -3,6 +3,7 @@ package game2048rendering;
 /** Represents the image of a numbered tile on a 2048 board.
  *  @author P. N. Hilfinger.
  */
+
 public class Tile {
 
     /** A new tile with VALUE as its value at (x, y).  This

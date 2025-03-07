@@ -22,7 +22,7 @@ public class Board {
         _viewPerspective = s;
     }
 
-    /** Create a board where RAWVALUES hold the values of the tiles on the board 
+    /** Create a board where RAWVALUES hold the values of the tiles on the board
      * (0 is null) with a current score of SCORE and the viewing perspective set to north. */
     public Board(int[][] rawValues) {
         int size = rawValues.length;
@@ -50,6 +50,7 @@ public class Board {
     /** Return the current Tile at (x, y), when sitting with the board
      *  oriented so that SIDE is at the top (farthest) from you. */
     private Tile vtile(int x, int y, Side side) {
+       // Tile a = _values[side.x(x, y, size())][side.y(x, y, size())];
         return _values[side.x(x, y, size())][side.y(x, y, size())];
     }
 

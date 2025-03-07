@@ -55,7 +55,7 @@ public class TestUpOnly {
                 {0, 0, 0, 0},
                 {0, 0, 0, 0},
         };
-        checkTilt(new Model(before, 0), new Model(after, 4), Side.NORTH);
+        checkTilt(new Model(before, 0), new Model(after, 9), Side.NORTH);
     }
 
     /** A triple merge. Only the leading 2 tiles should merge. */
