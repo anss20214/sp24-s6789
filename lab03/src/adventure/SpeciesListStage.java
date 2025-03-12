@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SpeciesListStage implements AdventureStage {
-
+    private static int flags = 3;
     // Honestly I just find O'Reilly's animals to be really cool
     private static final List<String> REFERENCE_1 = List.of(
             "leopards",     // Reactive Systems in Java
@@ -68,6 +68,8 @@ public class SpeciesListStage implements AdventureStage {
      * @param reference a reference list of animals.
      */
     private void handleResponses(List<String> reference) {
+
+
         while (true) {
             String input = in.readLine();
             List<String> user;
@@ -81,7 +83,10 @@ public class SpeciesListStage implements AdventureStage {
                 long numCorrect = Math.round(similarity * reference.size());
                 System.out.println("Try again! You got " + numCorrect + " animals correct!");
                 continue;
+            }else if(similarity != 1 && reference.size() == 0) {
+                break;
             }
+
             break;
         }
     }
@@ -91,6 +96,10 @@ public class SpeciesListStage implements AdventureStage {
      * If there is no similarity, it should return 0.
      */
     public static int arraySimilarity(List<String> listOne, List<String> listTwo) {
+        if (listOne.size() == 0){
+            return 0;
+        }
+
         List<String> copy = new ArrayList<>(listOne);
         int similarObjects = 0;
         for (String o : listTwo) {
